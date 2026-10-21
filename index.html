@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+
+<body>
+    <div class="login">
+    <h1>Login</h1>
+    <form>
+        <input type="text" name="username" placeholder="nome de usuario">
+        <input type="password" name="password" placeholder="senha">
+        <button>entrar</button>
+    </form>
+    </div>
+    <div class="cadastro">
+    <h1>Cadastro</h1>
+    <form class="cadastro" action="/user" method="POST">
+            <input type="text" name="username" placeholder="Username">
+            <input type="text" name="email" placeholder="Email">
+            <input type="password" name="password" placeholder="Password">
+            <button type="submit">Cadastrar</button>
+        </form>
+        </div>
+    <script>
+        const frmLogin = document.querySelector('form')
+        frmLogin.addEventListener('submit', async (ev) => {
+            ev.preventDefault()
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify({
+                    "username": frmLogin.username.value,
+                    "password": frmLogin.password.value
+                })
+            })
+
+            if (response.status == 404)
+                return alert("Usuário não encontrado")
+
+            if (response.status == 401)
+                return alert("Senha incorreta")
+
+            if (response.ok) {
+                window.location.href = "/home"
+                return
+            }
+
+            alert("Não deveria chegar aqui")
+        }) 
+        const form = document.querySelector('.cadastro');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            const response = await fetch('/cadastro', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                alert("Usuario cadastrado com sucesso");
+                window.location.href = "/home";
+            } else {
+                alert("Erro ao cadastrar usuario");
+            }
+        });
+    </script>
+</body>
+
+</html>
